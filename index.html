@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thunber — Site em até 48h no ar</title>
+  <meta name="description" content="Campanha Thunber: site profissional no ar em até 48h. Planos promocionais, foco em captura de leads, IA/Chatbots, Dashboards e 3D/VR.">
+  <link rel="canonical" href="https://thunber.com.br/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Thunber — Site em até 48h no ar">
+  <meta property="og:description" content="Planos promocionais por tempo limitado.">
+  <meta property="og:image" content="/assets/og-image-1200x630.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Thunber — Site em até 48h no ar">
+  <meta name="twitter:description" content="IA + UX/UI + Performance.">
+  <meta name="twitter:image" content="/assets/og-image-1200x630.png">
+  <meta name="theme-color" content="#0ea5e9">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/assets/icon-32x32.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { colors: { brand: { DEFAULT: '#0ea5e9', dark: '#0369a1' }}}}};</script>
+  <style>
+    .glass{backdrop-filter:saturate(150%) blur(12px);background:rgba(255,255,255,0.7)} .dark .glass{background:rgba(17,24,39,0.6)}
+    .shine{position:relative;overflow:hidden}.shine::after{content:"";position:absolute;inset:-150% -150% auto auto;width:50%;height:200%;transform:rotate(25deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:shine 5s linear infinite}
+    @keyframes shine{0%{transform:translateX(-200%) rotate(25deg)}100%{transform:translateX(200%) rotate(25deg)}}
+    .ticker{display:flex;gap:2rem;white-space:nowrap;animation:marquee 18s linear infinite}.ticker:hover{animation-play-state:paused}
+    @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    .toast{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);z-index:60}.hidden-important{display:none!important}
+  </style>
+  <script>(function(){const s=localStorage.getItem('thunber-theme');if(s==='dark'||(!s&&matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}})();</script>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+  <div id="promoBar" class="sticky top-0 z-[60] bg-gradient-to-r from-brand to-purple-500 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between gap-3 text-sm">
+      <div class="flex items-center gap-2"><span>⚡</span><span><strong>Site em até 48h no ar</strong> — oferta por tempo limitado</span></div>
+      <div class="flex items-center gap-3"><span class="font-mono bg-black/20 px-2 py-0.5 rounded" id="countdown48">--:--:--</span><a href="#lead" class="px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30">Garantir oferta</a></div>
+    </div>
+  </div>
+
+  <header class="sticky top-8 z-50 border border-gray-200/60 dark:border-gray-800/60 bg-white/70 dark:bg-gray-900/70 glass rounded-2xl mx-4 mt-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a href="#" class="flex items-center gap-2 font-semibold"><img src="/assets/logo-thunber.svg" alt="Thunber" class="h-7 w-7"><span>Thunber</span></a>
+        <nav class="hidden md:flex items-center gap-8 text-sm">
+          <a href="#servicos" class="hover:text-brand">Serviços</a><a href="#portfolio" class="hover:text-brand">Portfólio</a><a href="#planos" class="hover:text-brand">Planos</a><a href="#contato" class="hover:text-brand">Contato</a>
+        </nav>
+        <div class="hidden md:flex items-center gap-3">
+          <a id="ctaHeader" href="#" class="px-4 py-2 rounded-xl bg-brand text-white hover:bg-brand-dark transition shine">Quero meu site 48h</a>
+          <button id="themeToggle" aria-label="Alternar tema" class="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800">🌓</button>
+        </div>
+        <button id="menuBtn" class="md:hidden px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800">☰</button>
+      </div>
+    </div>
+    <div id="mobileNav" class="md:hidden hidden border-t border-gray-100 dark:border-gray-800">
+      <nav class="px-4 py-3 flex flex-col gap-3 text-sm">
+        <a href="#servicos" class="hover:text-brand">Serviços</a><a href="#portfolio" class="hover:text-brand">Portfólio</a><a href="#planos" class="hover:text-brand">Planos</a><a href="#contato" class="hover:text-brand">Contato</a>
+        <a id="ctaHeaderMobile" href="#" class="mt-2 px-4 py-2 rounded-xl bg-brand text-white hover:bg-brand-dark transition text-center">Quero meu site 48h</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-brand/10 via-transparent to-transparent"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div class="grid lg:grid-cols-2 gap-10 items-start">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand/30 text-brand text-xs mb-4"><span>⚡</span><span>Entrega rápida</span><span>•</span><span>IA + UX</span><span>•</span><span>3D/VR</span></div>
+          <h1 class="text-4xl sm:text-5xl font-bold leading-tight">Tecnologia que acelera o seu negócio</h1>
+          <p class="mt-4 text-lg text-gray-600 dark:text-gray-300">Sites, e‑commerce, dashboards, chatbots de IA e experiências 3D/VR — performance, acessibilidade e <strong>captação de leads</strong> em poucas horas.</p>
+          <div class="mt-6 overflow-hidden"><div class="ticker text-gray-600 dark:text-gray-300"><span>Clínicas</span><span>Advocacia</span><span>Varejo</span><span>Indústria</span><span>Educação</span><span>GovTech</span><span>Clínicas</span><span>Advocacia</span><span>Varejo</span><span>Indústria</span><span>Educação</span><span>GovTech</span></div></div>
+          <div class="mt-8 flex flex-wrap gap-3"><a href="#planos" class="px-6 py-3 rounded-2xl bg-brand text-white hover:bg-brand-dark transition shine">Ver planos</a><a id="ctaHero" href="#" class="px-6 py-3 rounded-2xl border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 transition">Falar no WhatsApp</a></div>
+          <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm text-gray-600 dark:text-gray-300"><div class="p-3 rounded-xl border border-gray-200 dark:border-gray-800">SEO</div><div class="p-3 rounded-xl border border-gray-200 dark:border-gray-800">PWA</div><div class="p-3 rounded-xl border border-gray-200 dark:border-gray-800">Acessibilidade</div><div class="p-3 rounded-xl border border-gray-200 dark:border-gray-800">99+ Lighthouse</div></div>
+        </div>
+        <div class="relative">
+          <div class="aspect-video rounded-3xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-2xl">
+            <svg viewBox="0 0 1200 675" class="w-full h-full"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient></defs><rect width="1200" height="675" fill="url(#g)"></rect><g fill="white" opacity="0.9"><circle cx="250" cy="220" r="90"/><rect x="400" y="160" width="500" height="60" rx="12"/><rect x="400" y="240" width="420" height="40" rx="10" opacity="0.8"/><rect x="400" y="300" width="380" height="40" rx="10" opacity="0.7"/><rect x="60" y="440" width="1080" height="140" rx="20" opacity="0.2"/></g></svg>
+          </div>
+          <form id="lead" class="mt-4 p-5 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/70 dark:bg-gray-900/70 glass space-y-3">
+            <p class="font-semibold">Garanta a oferta <strong>48h no ar</strong> — receba proposta agora</p>
+            <div class="grid sm:grid-cols-2 gap-3"><input id="leadName" name="name" required placeholder="Seu nome" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-transparent" /><input id="leadWhats" name="whats" required placeholder="Seu WhatsApp (DDD+Número)" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-transparent" /></div>
+            <textarea id="leadMsg" name="message" rows="3" placeholder="Fale rapidamente sobre seu projeto (opcional)" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-transparent"></textarea>
+            <button class="w-full px-4 py-3 rounded-xl bg-brand text-white hover:bg-brand-dark">Quero meu site em 48h</button>
+            <p class="text-xs text-gray-500">Sem spam. Usamos seus dados apenas para retorno comercial.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid sm:grid-cols-4 gap-4 text-center">
+        <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800"><p class="text-3xl font-bold"><span class="counter" data-to="95">0</span>%</p><p class="text-sm text-gray-500">Lighthouse médio</p></div>
+        <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800"><p class="text-3xl font-bold"><span class="counter" data-to="2">0</span>x</p><p class="text-sm text-gray-500">+ conversão média</p></div>
+        <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800"><p class="text-3xl font-bold"><span class="counter" data-to="48">0</span>h</p><p class="text-sm text-gray-500">Go‑live</p></div>
+        <div class="p-4 rounded-xl border border-gray-200 dark:border-gray-800"><p class="text-3xl font-bold"><span class="counter" data-to="30">0</span>d</p><p class="text-sm text-gray-500">Garantia</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="servicos" class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl sm:text-3xl font-bold">O que fazemos</h2>
+      <p class="mt-2 text-gray-600 dark:text-gray-300">Soluções ponta‑a‑ponta com <strong>UX/UI</strong>, <strong>IA (visão computacional)</strong> e integrações.</p>
+      <div class="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="p-6 rounded-2xl border border-gray-200 dark:border-gray-800 hover:shadow-lg transition"><h3 class="font-semibold">Websites & E‑commerce</h3><p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Landing pages, lojas e pagamentos.</p></div>
+        <div class="p-6 rounded-2xl border border-gray-200 dark:border-gray-800 hover:shadow-lg transition"><h3 class="font-semibold">Dashboards & Dados</h3><p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Conversão de planilhas em dados + <strong>APIs</strong>.</p></div>
+        <div class="p-6 rounded-2xl border border-gray-200 dark:border-gray-800 hover:shadow-lg transition"><h3 class="font-semibold">Chatbots & IA</h3><p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Atendimento e automações com IA.</p></div>
+        <div class="p-6 rounded-2xl border border-gray-200 dark:border-gray-800 hover:shadow-lg transition"><h3 class="font-semibold">3D / VR / AR</h3><p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Render, visualização e <strong>simulações</strong>.</p></div>
+        <div class="p-6 rounded-2xl border border-gray-200 dark:border-gray-800 hover:shadow-lg transition"><h3 class="font-semibold">Automação & Integrações</h3><p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Power Automate, Supabase, ERPs.</p></div>
+        <div class="p-6 rounded-2xl border border-gray-200 dark:border-gray-800 hover:shadow-lg transition"><h3 class="font-semibold">Branding & Design</h3><p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Identidade visual + UI/UX.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="p-6 rounded-2xl border border-brand/40 bg-brand/5 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-lg"><strong>Promo 48h:</strong> Start 10× R$180 • Pro a partir de 10× R$280</p>
+        <a href="#lead" class="px-5 py-3 rounded-xl bg-brand text-white hover:bg-brand-dark shine">Garantir agora</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="portfolio" class="py-16 bg-gray-50/60 dark:bg-gray-800/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl sm:text-3xl font-bold">Alguns trabalhos</h2>
+      <p class="mt-2 text-gray-600 dark:text-gray-300">Cases recentes com foco em resultado.</p>
+      <div class="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <article class="rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 hover:shadow-xl transition"><div class="aspect-video bg-gradient-to-br from-brand/20 to-purple-400/20"></div><div class="p-5"><h3 class="font-semibold">Projeto 1</h3><p class="mt-1 text-sm text-gray-600 dark:text-gray-300">+35% conversão em 30 dias.</p><a href="#lead" class="mt-3 inline-block text-brand">Quero algo assim →</a></div></article>
+        <article class="rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 hover:shadow-xl transition"><div class="aspect-video bg-gradient-to-br from-brand/20 to-purple-400/20"></div><div class="p-5"><h3 class="font-semibold">Projeto 2</h3><p class="mt-1 text-sm text-gray-600 dark:text-gray-300">Checkout em 1 clique.</p><a href="#lead" class="mt-3 inline-block text-brand">Quero algo assim →</a></div></article>
+        <article class="rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 hover:shadow-xl transition"><div class="aspect-video bg-gradient-to-br from-brand/20 to-purple-400/20"></div><div class="p-5"><h3 class="font-semibold">Projeto 3</h3><p class="mt-1 text-sm text-gray-600 dark:text-gray-300">PWA + 99/100 de Performance.</p><a href="#lead" class="mt-3 inline-block text-brand">Quero algo assim →</a></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="planos" class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between gap-4">
+        <div><h2 class="text-2xl sm:text-3xl font-bold">Planos</h2><p class="mt-2 text-gray-600 dark:text-gray-300">Comece pequeno e evolua com a sua demanda.</p></div>
+        <div class="text-sm border rounded-xl px-2 py-1 flex items-center gap-2"><input id="toggleParcelado" type="checkbox" class="accent-brand" checked /><label for="toggleParcelado">Exibir parcelado</label></div>
+      </div>
+      <div class="mt-8 grid md:grid-cols-3 gap-6">
+        <div class="p-6 rounded-2xl border border-gray-200 dark:border-gray-800"><h3 class="text-lg font-semibold">Start (Promo 48h)</h3><p class="text-3xl font-bold mt-1"><span class="preco" data-avista="R$ 1.800" data-parc="10× R$ 180">10× R$ 180</span></p><ul class="mt-4 text-sm space-y-2 text-gray-600 dark:text-gray-300"><li>• Landing page otimizada</li><li>• Formulário + WhatsApp com UTM</li><li>• UI/UX e SEO básico</li></ul><a href="#lead" class="mt-6 inline-block px-4 py-2 rounded-xl bg-brand text-white">Quero esse</a></div>
+        <div class="p-6 rounded-2xl border-2 border-brand dark:border-brand bg-white/50 dark:bg-gray/50"><h3 class="text-lg font-semibold">Pro — Sua loja online no ar</h3><p class="text-3xl font-bold mt-1"><span class="preco" data-avista="R$ 4.900+" data-parc="a partir de 10× R$ 280">a partir de 10× R$ 280</span></p><ul class="mt-4 text-sm space-y-2 text-gray-600 dark:text-gray-300"><li>• Integrações + Dashboard</li><li>• Pagamentos (gateway)</li><li>• Performance & Acessibilidade</li></ul><a href="#lead" class="mt-6 inline-block px-4 py-2 rounded-xl bg-brand text-white">Quero esse</a></div>
+        <div class="p-6 rounded-2xl border border-gray-200 dark:border-gray-800"><h3 class="text-lg font-semibold">Elite</h3><p class="text-3xl font-bold mt-1"><span class="preco" data-avista="R$ 9.900+" data-parc="consultar">consultar</span></p><ul class="mt-4 text-sm space-y-2 text-gray-600 dark:text-gray-300"><li>• Loja/E‑commerce completo</li><li>• 3D/VR/IA personalizados</li><li>• Suporte prioritário</li></ul><a href="#lead" class="mt-6 inline-block px-4 py-2 rounded-xl bg-brand text-white">Falar com time</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16 bg-gray-50/60 dark:bg-gray-800/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl sm:text-3xl font-bold">Perguntas frequentes</h2>
+      <div class="mt-6 space-y-3">
+        <details class="p-4 rounded-xl border border-gray-200 dark:border-gray-800"><summary class="cursor-pointer font-semibold">Quanto tempo leva para lançar?</summary><p class="mt-2 text-sm text-gray-600 dark:text-gray-300">A campanha 48h considera recebimento do conteúdo (logo, textos e contatos) + aprovação rápida.</p></details>
+        <details class="p-4 rounded-xl border border-gray-200 dark:border-gray-800"><summary class="cursor-pointer font-semibold">Vocês ajudam com conteúdo?</summary><p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Sim, roteirizamos textos, imagens e prompts de IA para acelerar o go‑live.</p></details>
+        <details class="p-4 rounded-xl border border-gray-200 dark:border-gray-800"><summary class="cursor-pointer font-semibold">Posso parcelar?</summary><p class="mt-2 text-sm text-gray-600 dark:text-gray-300">Sim, via Pix parcelado ou cartão (consulte condições).</p></details>
+        <details class="p-4 rounded-xl border border-gray-200 dark:border-gray-800"><summary class="cursor-pointer font-semibold">Dão garantia?</summary><p class="mt-2 text-sm text-gray-600 dark:text-gray-300">30 dias de correções pós‑lançamento incluídos.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section id="contato" class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-2 gap-10 items-center">
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-bold">Fale com a Thunber</h2>
+          <p class="mt-2 text-gray-600 dark:text-gray-300">Conte um pouco do seu projeto. Respondemos em até 1 dia útil.</p>
+          <ul class="mt-4 text-sm text-gray-600 dark:text-gray-300 space-y-1">
+            <li>📍 Salvador, Bahia — Brasil</li>
+            <li>✉️ <a href="mailto:contato@thunber.com.br" class="underline">contato@thunber.com.br</a></li>
+            <li>💬 WhatsApp: <a id="waFooter" class="underline" href="#" target="_blank" rel="noopener">+55 99 99999‑9999</a></li>
+          </ul>
+        </div>
+        <form id="contactForm" class="p-6 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-3 bg-white/60 dark:bg-gray-900/60">
+          <input name="name" required placeholder="Seu nome" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-transparent" />
+          <input name="email" type="email" required placeholder="Seu e-mail" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-transparent" />
+          <textarea name="message" rows="4" required placeholder="Conte sobre seu projeto..." class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-transparent"></textarea>
+          <button class="w-full px-4 py-3 rounded-xl bg-brand text-white hover:bg-brand-dark">Enviar</button>
+          <p class="text-xs text-gray-500">Dica: integre este formulário ao Brevo (antigo Sendinblue) ou Supabase.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-10 border-t border-gray-200 dark:border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-sm">
+      <div class="flex flex-col md:flex-row justify-between gap-6">
+        <div class="max-w-md"><a href="#" class="flex items-center gap-2 font-semibold"><img src="/assets/logo-thunber.svg" alt="Thunber" class="h-6 w-6"><span>Thunber</span></a><p class="mt-2 text-gray-600 dark:text-gray-300">Soluções tecnológicas inteligentes para acelerar negócios — do site ao 3D.</p></div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-6">
+          <div><p class="font-semibold">Empresa</p><ul class="mt-2 space-y-1"><li><a href="#servicos" class="hover:underline">Serviços</a></li><li><a href="#planos" class="hover:underline">Planos</a></li><li><a href="/privacidade.html" class="hover:underline">Privacidade</a></li><li><a href="/termos.html" class="hover:underline">Termos</a></li></ul></div>
+          <div><p class="font-semibold">Contato</p><ul class="mt-2 space-y-1"><li><a href="mailto:contato@thunber.com.br" class="hover:underline">contato@thunber.com.br</a></li><li><a id="waFooter2" href="#" class="hover:underline" target="_blank" rel="noopener">WhatsApp</a></li></ul></div>
+          <div><p class="font-semibold">Social</p><ul class="mt-2 space-y-1"><li><a href="#" class="hover:underline">Instagram</a></li><li><a href="#" class="hover:underline">LinkedIn</a></li><li><a href="#" class="hover:underline">YouTube</a></li></ul></div>
+        </div>
+      </div>
+      <p class="mt-8 text-gray-500">© 2025 Thunber. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <a id="waFab" href="#" target="_blank" rel="noopener" aria-label="Falar no WhatsApp" class="fixed bottom-20 right-4 z-50 rounded-full w-14 h-14 flex items-center justify-center shadow-xl bg-green-500 text-white hover:scale-105 transition">✆</a>
+  <div class="md:hidden fixed bottom-0 inset-x-0 z-50 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-3 flex items-center justify-between gap-3">
+    <button onclick="document.getElementById('lead').scrollIntoView({behavior:'smooth'})" class="px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-800">Quero meu site</button>
+    <a id="waSticky" href="#" target="_blank" rel="noopener" class="px-4 py-2 rounded-xl bg-brand text-white">WhatsApp</a>
+  </div>
+
+  <div id="exitModal" class="hidden fixed inset-0 z-[70] bg-black/50 items-center justify-center p-4">
+    <div class="max-w-md w-full rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-6 space-y-3">
+      <div class="flex items-center justify-between"><h3 class="text-lg font-semibold">Antes de você sair…</h3><button id="exitClose" class="text-xl leading-none">×</button></div>
+      <p class="text-sm text-gray-600 dark:text-gray-300">Quer que a gente te chame no WhatsApp em minutos?</p>
+      <form id="exitForm" class="space-y-3"><input id="exitName" placeholder="Seu nome" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-transparent" /><input id="exitWhats" placeholder="Seu WhatsApp (DDD+Número)" class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-transparent" /><button class="w-full px-4 py-3 rounded-xl bg-brand text-white hover:bg-brand-dark">Quero um orçamento</button></form>
+      <p class="text-xs text-gray-500">Sem spam — só uma proposta rápida.</p>
+    </div>
+  </div>
+
+  <div id="cookieBar" class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] sm:w-auto max-w-3xl px-4 py-3 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-xl hidden">
+    <p class="text-sm">Usamos cookies para melhorar sua experiência. <a href="/privacidade.html" class="underline">Saiba mais</a>.</p>
+    <div class="mt-3 flex gap-2 justify-end"><button id="cookieReject" class="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800">Negar</button><button id="cookieAccept" class="px-3 py-2 rounded-xl bg-brand text-white">Aceitar</button></div>
+  </div>
+
+  <div id="toast" class="toast hidden-important"><div class="px-4 py-2 rounded-xl bg-black text-white text-sm">Abrindo WhatsApp com sua mensagem…</div></div>
+
+  <script>
+    const WHATSAPP_NUMBER = '5599999999999'; // TROCAR!
+    function getQueryParams(){const p=new URLSearchParams(location.search);const o={},keys=['utm_source','utm_medium','utm_campaign','utm_content','utm_term'];for(const k of keys)o[k]=p.get(k)||'';return o}
+    function waLink(text){const utm=getQueryParams();const tag=Object.entries(utm).filter(([_,v])=>v).map(([k,v])=>k+':'+v).join(' | ');const final=tag?text+'\n\n['+tag+']':text;return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(final)}`}
+    function setAllWhatsLinks(url){['ctaHeader','ctaHeaderMobile','ctaHero','waFooter','waFooter2','waFab','waSticky'].forEach(id=>{const el=document.getElementById(id);if(el)el.setAttribute('href',url)})}
+    function toastShow(){const t=document.getElementById('toast');t.classList.remove('hidden-important');setTimeout(()=>t.classList.add('hidden-important'),2500)}
+    const mBtn=document.getElementById('menuBtn');const mNav=document.getElementById('mobileNav');if(mBtn)mBtn.addEventListener('click',()=>mNav.classList.toggle('hidden'));
+    const tBtn=document.getElementById('themeToggle');if(tBtn)tBtn.addEventListener('click',()=>{const el=document.documentElement;const dark=el.classList.toggle('dark');localStorage.setItem('thunber-theme',dark?'dark':'light')});
+    const cookieKey='thunber-cookie-ok';const cookieBar=document.getElementById('cookieBar');const accept=document.getElementById('cookieAccept');const reject=document.getElementById('cookieReject');if(!localStorage.getItem(cookieKey))cookieBar.classList.remove('hidden');if(accept)accept.addEventListener('click',()=>{localStorage.setItem(cookieKey,'yes');cookieBar.classList.add('hidden')});if(reject)reject.addEventListener('click',()=>{localStorage.setItem(cookieKey,'no');cookieBar.classList.add('hidden')});
+    (function(){const key='promo-48h-end';let end=localStorage.getItem(key);if(!end){end=Date.now()+48*60*60*1000;localStorage.setItem(key,end)}end=parseInt(end,10);const el=document.getElementById('countdown48');function tick(){const diff=Math.max(0,end-Date.now());const h=String(Math.floor(diff/3.6e6)).padStart(2,'0');const m=String(Math.floor((diff%3.6e6)/6e4)).padStart(2,'0');const s=String(Math.floor((diff%6e4)/1e3)).padStart(2,'0');el.textContent=`${h}:${m}:${s}`;if(diff<=0)clearInterval(intv)}tick();const intv=setInterval(tick,1000)})();
+    const counters=document.querySelectorAll('.counter');const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const el=e.target;const to=parseInt(el.dataset.to,10);let cur=0;const step=Math.ceil(to/60);const t=setInterval(()=>{cur+=step;if(cur>=to){cur=to;clearInterval(t)}el.textContent=cur},16);io.unobserve(el)}})},{threshold:0.6});counters.forEach(c=>io.observe(c));
+    const exitModal=document.getElementById('exitModal');const exitClose=document.getElementById('exitClose');let exitShown=false;function openExit(){if(!exitShown){exitModal.classList.remove('hidden');exitModal.classList.add('flex');exitShown=true}}document.addEventListener('mouseleave',(e)=>{if(e.clientY<=0)openExit()});exitClose.addEventListener('click',()=>exitModal.classList.add('hidden'));
+    function handleToWhats(name,whats,msg){const text=`Olá, sou ${name}. Quero meu site com a campanha 48h. Meu WhatsApp: ${whats}.\n${msg?('Sobre o projeto: '+msg):''}`;const url=waLink(text);setAllWhatsLinks(url);toastShow();window.open(url,'_blank')}
+    document.getElementById('lead').addEventListener('submit',(e)=>{e.preventDefault();const name=document.getElementById('leadName').value.trim();const whats=document.getElementById('leadWhats').value.trim();const msg=document.getElementById('leadMsg').value.trim();handleToWhats(name,whats,msg);if(window.gtag){gtag('event','lead_form_submit',{campaign:'thunber-48h-start'})}});
+    document.getElementById('exitForm').addEventListener('submit',(e)=>{e.preventDefault();const name=document.getElementById('exitName').value.trim();const whats=document.getElementById('exitWhats').value.trim();handleToWhats(name,whats,'');exitModal.classList.add('hidden')});
+    document.getElementById('contactForm').addEventListener('submit',(e)=>{e.preventDefault();const fd=new FormData(e.target);const name=(fd.get('name')||'').toString();const email=(fd.get('email')||'').toString();const message=(fd.get('message')||'').toString();const text=`Olá, sou ${name} (${email}). Quero um orçamento. Meu projeto: ${message}`;const url=waLink(text);toastShow();window.open(url,'_blank');if(window.gtag){gtag('event','contact_form_whatsapp_redirect')}});
+    setAllWhatsLinks(waLink('Olá! Vim do site e quero saber da oferta 48h.'));
+  </script>
+  <!-- GA4 (habilitar substituindo G-XXXXXX) -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXX"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config','G-XXXXXX');</script> -->
+</body>
+</html>

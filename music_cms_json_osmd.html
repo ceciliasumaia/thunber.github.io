@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Thunber • CMS de Aulas de Música (JSON DB + Partitura via CDN)</title>
+  <meta name="description" content="CMS de música com aluno/admin, usando apenas CDN e banco JSON em localStorage. Render de partitura com OpenSheetMusicDisplay." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{brand:{DEFAULT:'#0ea5e9',dark:'#0369a1'}}}}};</script>
+  <style>
+    .glass{backdrop-filter:saturate(150%) blur(12px);background:rgba(255,255,255,.7)}.dark .glass{background:rgba(17,24,39,.6)}
+    .hidden-important{display:none!important}.container{max-width:1100px;margin:0 auto}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+    .score-wrap{border:1px solid rgba(0,0,0,.1);border-radius:16px;padding:12px;background:rgba(255,255,255,.6)}
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 min-h-screen">
+  <header class="border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50 bg-white/70 dark:bg-gray-900/70 glass">
+    <div class="container px-4 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-2 font-semibold"><span class="text-brand">♪</span><span>Music CMS (JSON + Partitura)</span></div>
+      <nav class="text-sm flex items-center gap-3">
+        <a href="#dashboard" class="hover:text-brand">Dashboard</a>
+        <a href="#admin" class="hover:text-brand">Admin</a>
+        <button id="btnLogout" class="px-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800">Sair</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container px-4 py-8 space-y-8">
+    <!-- AUTH -->
+    <section id="authView" class="max-w-2xl mx-auto">
+      <div class="p-6 rounded-2xl border border-gray-200 dark:border-gray-800 glass">
+        <h1 class="text-2xl font-bold">Entrar ou criar conta</h1>
+        <p class="text-sm text-gray-600 dark:text-gray-300">Demo <strong>só com CDN</strong>, banco JSON no <code>localStorage</code> e partitura com <strong>OpenSheetMusicDisplay</strong>. Não use em produção.</p>
+        <div class="mt-4 grid sm:grid-cols-2 gap-4">
+          <form id="formSignin" class="space-y-2">
+            <p class="font-semibold">Entrar</p>
+            <input id="siEmail" type="email" placeholder="Seu e-mail" class="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-transparent" required />
+            <input id="siPass" type="password" placeholder="Senha" class="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-transparent" required />
+            <button class="w-full px-3 py-2 rounded-xl bg-brand text-white">Entrar</button>
+            <p id="siMsg" class="text-xs"></p>
+          </form>
+          <form id="formSignup" class="space-y-2">
+            <p class="font-semibold">Criar conta</p>
+            <input id="suName" placeholder="Seu nome" class="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-transparent" required />
+            <input id="suEmail" type="email" placeholder="Seu e-mail" class="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-transparent" required />
+            <input id="suPass" type="password" placeholder="Senha" class="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-transparent" required />
+            <button class="w-full px-3 py-2 rounded-xl bg-brand text-white">Criar conta</button>
+            <p class="text-xs text-gray-500">Nova conta inicia como <strong>aluno</strong>. Promova na área Admin para testar.</p>
+            <p id="suMsg" class="text-xs"></p>
+          </form>
+        </div>
+        <div class="mt-4 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 text-sm">
+          <p class="font-semibold">Credenciais de teste:</p>
+          <ul class="mt-1 mono">
+            <li>Admin: <span class="underline">admin@demo.local</span> / <span class="underline">admin123</span></li>
+            <li>Aluno: <span class="underline">aluno@demo.local</span> / <span class="underline">aluno123</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- STUDENT -->
+    <section id="studentView" class="hidden-important">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-bold">Minhas Aulas</h2>
+        <div class="text-xs text-gray-600 dark:text-gray-300">Logado como: <span id="userEmail"></span> • Perfil: <span id="userRole" class="font-semibold"></span></div>
+      </div>
+      <div class="grid lg:grid-cols-3 gap-6 mt-4">
+        <aside class="lg:col-span-1 p-4 rounded-2xl border border-gray-200 dark:border-gray-800">
+          <input id="lessonSearch" placeholder="Buscar aula..." class="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-transparent" />
+          <ul id="lessonList" class="mt-3 space-y-2 text-sm"></ul>
+        </aside>
+        <section class="lg:col-span-2 space-y-4">
+          <div id="lessonDetail" class="p-4 rounded-2xl border border-gray-200 dark:border-gray-800">
+            <p class="text-sm text-gray-500">Selecione uma aula para ver detalhes.</p>
+          </div>
+          <div class="p-4 rounded-2xl border border-gray-200 dark:border-gray-800">
+            <h3 class="font-semibold mb-2">Comentários</h3>
+            <form id="commentForm" class="flex gap-2">
+              <input id="commentInput" placeholder="Escreva um comentário" class="flex-1 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-transparent" />
+              <button class="px-4 py-2 rounded-xl bg-brand text-white">Enviar</button>
+            </form>
+            <ul id="commentList" class="mt-3 space-y-2 text-sm"></ul>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!-- ADMIN -->
+    <section id="adminView" class="hidden-important">
+      <h2 class="text-xl font-bold">Admin • Gestão</h2>
+      <div class="mt-4 grid lg:grid-cols-2 gap-6">
+        <div class="p-4 rounded-2xl border border-gray-200 dark:border-gray-800">
+          <h3 class="font-semibold">Cadastrar/Editar Aula</h3>
+          <form id="lessonForm" class="mt-2 grid gap-2">
+            <input id="lfId" type="hidden" />
+            <input id="lfTitle" placeholder="Título" class="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-transparent" required />
+            <textarea id="lfDesc" rows="3" placeholder="Descrição" class="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-transparent"></textarea>
+            <input id="lfVideo" placeholder="URL do vídeo (YouTube)" class="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-transparent" />
+            <label class="text-sm inline-flex items-center gap-2"><input id="lfPub" type="checkbox" class="accent-brand" checked /> Publicada</label>
+            <div class="p-3 rounded-xl border border-gray-200 dark:border-gray-800">
+              <p class="font-semibold mb-2">Partitura (MusicXML)</p>
+              <input id="lfScoreUrl" placeholder="URL do .musicxml / .xml (opcional)" class="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-transparent w-full mb-2" />
+              <div class="flex flex-wrap items-center gap-2 text-sm">
+                <label class="px-3 py-2 rounded-xl border cursor-pointer">Importar arquivo XML
+                  <input id="lfScoreFile" type="file" accept=".xml,.musicxml,application/xml" class="hidden" />
+                </label>
+                <button id="btnClearScore" type="button" class="px-3 py-2 rounded-xl border">Limpar partitura</button>
+                <span id="scoreStatus" class="text-xs text-gray-500"></span>
+              </div>
+            </div>
+            <div class="flex gap-2 mt-2">
+              <button class="px-4 py-2 rounded-xl bg-brand text-white" id="btnSaveLesson">Salvar</button>
+              <button class="px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-800" id="btnResetLesson" type="button">Limpar</button>
+            </div>
+            <p id="lfMsg" class="text-xs"></p>
+          </form>
+        </div>
+        <div class="p-4 rounded-2xl border border-gray-200 dark:border-gray-800">
+          <h3 class="font-semibold">Aulas</h3>
+          <ul id="adminLessonList" class="mt-2 space-y-2 text-sm"></ul>
+        </div>
+      </div>
+      <div class="mt-6 grid lg:grid-cols-2 gap-6">
+        <div class="p-4 rounded-2xl border border-gray-200 dark:border-gray-800">
+          <h3 class="font-semibold">Usuários</h3>
+          <ul id="userList" class="mt-2 space-y-2 text-sm"></ul>
+        </div>
+        <div class="p-4 rounded-2xl border border-gray-200 dark:border-gray-800">
+          <h3 class="font-semibold">Backup</h3>
+          <div class="flex flex-wrap gap-2">
+            <button id="btnExport" class="px-4 py-2 rounded-xl border">Exportar JSON</button>
+            <label class="px-4 py-2 rounded-xl border cursor-pointer">Importar JSON
+              <input id="fileImport" type="file" accept="application/json" class="hidden" />
+            </label>
+            <button id="btnReset" class="px-4 py-2 rounded-xl border">Resetar Demo</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- OSMD via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/opensheetmusicdisplay@1.9.2/build/opensheetmusicdisplay.min.js"></script>
+
+  <script>
+    // ---------- Util / DB ----------
+    const DB_KEY = 'musiccms_db';
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+    async function sha256(str){const buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');}
+
+    const SAMPLE_XML = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.1 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
+<score-partwise version="3.1">
+  <part-list><score-part id="P1"><part-name>Piano</part-name></score-part></part-list>
+  <part id="P1">
+    <measure number="1">
+      <attributes><divisions>1</divisions><key><fifths>0</fifths></key>
+        <time><beats>4</beats><beat-type>4</beat-type></time><clef><sign>G</sign><line>2</line></clef>
+      </attributes>
+      <note><pitch><step>C</step><octave>4</octave></pitch><duration>1</duration><type>quarter</type></note>
+      <note><pitch><step>D</step><octave>4</octave></pitch><duration>1</duration><type>quarter</type></note>
+      <note><pitch><step>E</step><octave>4</octave></pitch><duration>1</duration><type>quarter</type></note>
+      <note><pitch><step>F</step><octave>4</octave></pitch><duration>1</duration><type>quarter</type></note>
+    </measure>
+    <measure number="2">
+      <note><pitch><step>G</step><octave>4</octave></pitch><duration>1</duration><type>quarter</type></note>
+      <note><pitch><step>A</step><octave>4</octave></pitch><duration>1</duration><type>quarter</type></note>
+      <note><pitch><step>B</step><octave>4</octave></pitch><duration>1</duration><type>quarter</type></note>
+      <note><pitch><step>C</step><octave>5</octave></pitch><duration>1</duration><type>quarter</type></note>
+      <barline location="right"><bar-style>light-heavy</bar-style></barline>
+    </measure>
+  </part>
+</score-partwise>`;
+
+    const DB = {
+      load(){const raw=localStorage.getItem(DB_KEY);return raw?JSON.parse(raw):null;},
+      save(d){localStorage.setItem(DB_KEY, JSON.stringify(d));},
+      seed(){
+        const now=new Date().toISOString();
+        const d={
+          meta:{nextIds:{lesson:3,comment:1}},
+          users:[
+            {id:'u-admin',email:'admin@demo.local',pass:'sha256:'+'fcf730b6d95236ecd3c9fc2d92d7b6b2bb061514961aec041d6c7a7192f592e4',name:'Admin',role:'admin',created_at:now},
+            {id:'u-aluno',email:'aluno@demo.local',pass:'sha256:'+'2d1d5b51fc5a5df2dbbb389e0da4a1ba2c5a9e94f77a7d68a5ddbf1e6c8f89f3',name:'Aluno',role:'student',created_at:now}
+          ],
+          lessons:[
+            {id:1,title:'Introdução ao Violão',description:'Postura, afinação e primeiros acordes.',video_url:'https://www.youtube.com/watch?v=dQw4w9WgXcQ',is_published:true,score_xml:SAMPLE_XML,score_url:'',created_at:now,updated_at:now},
+            {id:2,title:'Ritmo & Batidas',description:'Padrões de ritmo para músicas populares.',video_url:'',is_published:true,score_xml:'',score_url:'',created_at:now,updated_at:now}
+          ],
+          comments:[],progress:[]
+        };
+        this.save(d);return d;
+      }
+    };
+
+    let db = DB.load() || DB.seed();
+    let currentUser=null;
+    let currentLessonId=null; // mantém a aula aberta
+
+    // ---------- Views ----------
+    const authView=$('#authView'), studentView=$('#studentView'), adminView=$('#adminView');
+    const userEmail=$('#userEmail'), userRole=$('#userRole');
+    function show(v){[authView,studentView,adminView].forEach(x=>x.classList.add('hidden-important'));
+      if(v==='auth')authView.classList.remove('hidden-important');
+      if(v==='student')studentView.classList.remove('hidden-important');
+      if(v==='admin')adminView.classList.remove('hidden-important');
+    }
+    function getUserByEmail(email){return db.users.find(u=>u.email.toLowerCase()===email.toLowerCase());}
+    async function doLogin(email,pass){const u=getUserByEmail(email);if(!u)return{error:'Usuário não encontrado'};const h=await sha256(pass);if(u.pass!=='sha256:'+h)return{error:'Senha incorreta'};currentUser=u;renderAfterAuth();return{ok:true};}
+    async function doSignup(name,email,pass){if(getUserByEmail(email))return{error:'E-mail já cadastrado'};const id='u-'+Math.random().toString(36).slice(2,10);const now=new Date().toISOString();const h=await sha256(pass);db.users.push({id,email,pass:'sha256:'+h,name,role:'student',created_at:now});DB.save(db);currentUser=db.users.find(u=>u.id===id);renderAfterAuth();return{ok:true};}
+    function logout(){currentUser=null;show('auth');}
+    function isAdmin(){return currentUser?.role==='admin';}
+
+    // ---------- Student ----------
+    const lessonList=$('#lessonList'), lessonDetail=$('#lessonDetail'), lessonSearch=$('#lessonSearch');
+    const commentList=$('#commentList'), commentForm=$('#commentForm'), commentInput=$('#commentInput');
+
+    function ytEmbed(url){try{const m=url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);if(!m)return'';const id=m[1];return `<iframe class="w-full aspect-video rounded-xl" src="https://www.youtube.com/embed/${id}" allowfullscreen loading="lazy"></iframe>`;}catch{return''}}
+
+    function listLessons(){
+      const q=(lessonSearch.value||'').trim().toLowerCase();
+      const items=db.lessons.filter(l=>(isAdmin()||l.is_published)&&(!q||l.title.toLowerCase().includes(q)))
+        .sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+      lessonList.innerHTML=items.map(l=>`
+        <li class="p-3 rounded-xl border border-gray-200 dark:border-gray-800 flex items-center justify-between">
+          <div><p class="font-semibold">${l.title}</p><p class="text-xs text-gray-500">${l.is_published?'Publicado':'Rascunho'} • #${l.id}</p></div>
+          <button data-id="${l.id}" class="btnOpen text-sm px-3 py-1.5 rounded-xl border">Abrir</button>
+        </li>`).join('');
+      $$('.btnOpen').forEach(b=>b.addEventListener('click',()=>openLesson(parseInt(b.dataset.id,10))));
+    }
+    lessonSearch.addEventListener('input',()=>listLessons());
+
+    let osmd=null;
+    async function renderScoreForLesson(lesson){
+      const mount = document.getElementById('osmdContainer');
+      if(!mount) return;
+      if(!osmd){ osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay(mount, { autoResize: true, backend: "svg" }); }
+      try{
+        if(lesson.score_url && lesson.score_url.trim()){
+          await osmd.load(lesson.score_url.trim());
+        } else if(lesson.score_xml && lesson.score_xml.trim()){
+          const blob = new Blob([lesson.score_xml], { type: "application/xml" });
+          const url = URL.createObjectURL(blob);
+          await osmd.load(url);
+          URL.revokeObjectURL(url);
+        } else {
+          mount.innerHTML = '<p class="text-xs text-gray-500">(adicione uma partitura em MusicXML para esta aula)</p>';
+          return;
+        }
+        await osmd.render();
+      } catch(e){
+        mount.innerHTML = `<p class="text-xs text-red-600">Erro ao carregar partitura: ${e?.message||e}</p>`;
+      }
+    }
+
+    function openLesson(id){
+      currentLessonId=id;
+      const l=db.lessons.find(x=>x.id===id); if(!l) return;
+      lessonDetail.innerHTML=`
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h3 class="text-lg font-semibold">${l.title}</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-300">${l.description||''}</p>
+          </div>
+          <div class="flex gap-2">
+            <button id="btnMarkDone" class="px-3 py-1.5 rounded-xl bg-brand text-white text-sm">Marcar concluída</button>
+          </div>
+        </div>
+        <div class="mt-3">${ ytEmbed(l.video_url||'') || '<p class="text-xs text-gray-500">(adicione a URL do vídeo para embed)</p>' }</div>
+        <div class="mt-4 score-wrap">
+          <div class="flex items-center justify-between gap-3 mb-2">
+            <p class="font-semibold">Partitura</p>
+            <div class="flex items-center gap-2 text-sm">
+              <label for="zoomRange">Zoom</label>
+              <input id="zoomRange" type="range" min="40" max="140" value="100" />
+              <button id="btnPrintScore" class="px-3 py-1 rounded-lg border">Imprimir</button>
+            </div>
+          </div>
+          <div id="osmdContainer"></div>
+        </div>`;
+      $('#btnMarkDone').addEventListener('click',()=>markDone(id));
+      $('#zoomRange').addEventListener('input',(e)=>{ if(osmd){ osmd.zoom = e.target.value/100; osmd.render(); } });
+      $('#btnPrintScore').addEventListener('click', ()=>{
+        const win = window.open('','_blank'); if(!win) return;
+        win.document.write(`<html><head><title>${l.title} — Partitura</title></head><body>${document.getElementById('osmdContainer').innerHTML}</body></html>`);
+        win.document.close(); win.focus(); win.print();
+      });
+      renderScoreForLesson(l);
+      listComments(id);
+    }
+
+    function listComments(lessonId){
+      const items=db.comments.filter(c=>c.lesson_id===lessonId).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+      commentList.innerHTML=items.map(c=>`
+        <li class="p-3 rounded-xl border border-gray-200 dark:border-gray-800">
+          <p>${c.content}</p>
+          <p class="text-[11px] text-gray-500 mt-1">${new Date(c.created_at).toLocaleString()}</p>
+        </li>`).join('');
+    }
+    commentForm.addEventListener('submit',(e)=>{
+      e.preventDefault();
+      const content=(commentInput.value||'').trim(); if(!content||!currentLessonId) return;
+      db.comments.push({ id: db.meta.nextIds.comment++, lesson_id: currentLessonId, user_id: currentUser.id, content, created_at:new Date().toISOString() });
+      DB.save(db); commentInput.value=''; listComments(currentLessonId);
+    });
+    function markDone(lessonId){
+      const idx=db.progress.findIndex(p=>p.lesson_id===lessonId&&p.user_id===currentUser.id);
+      const now=new Date().toISOString();
+      if(idx>=0){ db.progress[idx].status='completed'; db.progress[idx].updated_at=now; }
+      else { db.progress.push({ lesson_id:lessonId, user_id:currentUser.id, status:'completed', updated_at:now }); }
+      DB.save(db); alert('Marcada como concluída!');
+    }
+
+    // ---------- Admin ----------
+    const lfId=$('#lfId'), lfTitle=$('#lfTitle'), lfDesc=$('#lfDesc'), lfVideo=$('#lfVideo'), lfPub=$('#lfPub'), lfMsg=$('#lfMsg');
+    const adminLessonList=$('#adminLessonList'), userList=$('#userList');
+    const lfScoreUrl=$('#lfScoreUrl'), lfScoreFile=$('#lfScoreFile'), scoreStatus=$('#scoreStatus');
+    let importedScoreXML='';
+
+    lfScoreFile.addEventListener('change',(e)=>{
+      const f=e.target.files[0]; if(!f) return;
+      const r=new FileReader();
+      r.onload=()=>{ importedScoreXML = r.result; scoreStatus.textContent = 'Arquivo carregado ('+f.name+')'; };
+      r.readAsText(f);
+    });
+    $('#btnClearScore').addEventListener('click',()=>{ importedScoreXML=''; lfScoreUrl.value=''; scoreStatus.textContent=''; });
+
+    function saveLesson(){
+      const payload = {
+        title: lfTitle.value.trim(),
+        description: lfDesc.value.trim(),
+        video_url: lfVideo.value.trim(),
+        is_published: lfPub.checked,
+        score_url: lfScoreUrl.value.trim(),
+        score_xml: importedScoreXML // prioridade para arquivo importado
+      };
+      lfMsg.textContent='Salvando...';
+      if(lfId.value){
+        const id=parseInt(lfId.value,10); const i=db.lessons.findIndex(x=>x.id===id);
+        if(i>=0){ db.lessons[i] = { ...db.lessons[i], ...payload, updated_at:new Date().toISOString() }; }
+      } else {
+        const id=db.meta.nextIds.lesson++;
+        db.lessons.unshift({ id, ...payload, created_at:new Date().toISOString(), updated_at:new Date().toISOString() });
+      }
+      DB.save(db);
+      lfMsg.textContent='OK!';
+      lfId.value=''; lfTitle.value=''; lfDesc.value=''; lfVideo.value=''; lfPub.checked=true; lfScoreUrl.value=''; importedScoreXML=''; scoreStatus.textContent='';
+      listLessons(); listLessonsAdmin();
+    }
+    function listLessonsAdmin(){
+      const items=[...db.lessons].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+      adminLessonList.innerHTML=items.map(l=>`
+        <li class="p-3 rounded-xl border border-gray-200 dark:border-gray-800 flex items-center justify-between">
+          <div><p class="font-semibold">${l.title}</p><p class="text-[11px] text-gray-500">${l.is_published?'Publicado':'Rascunho'} • #${l.id}</p></div>
+          <div class="flex gap-2">
+            <button class="px-2 py-1 rounded border text-xs" onclick="editLesson(${l.id})">Editar</button>
+            <button class="px-2 py-1 rounded border text-xs" onclick="delLesson(${l.id})">Apagar</button>
+          </div>
+        </li>`).join('');
+    }
+    window.editLesson=(id)=>{
+      const l=db.lessons.find(x=>x.id===id); if(!l) return;
+      lfId.value=l.id; lfTitle.value=l.title; lfDesc.value=l.description||''; lfVideo.value=l.video_url||''; lfPub.checked=!!l.is_published;
+      lfScoreUrl.value=l.score_url||''; importedScoreXML = l.score_xml || ''; scoreStatus.textContent = importedScoreXML ? 'XML carregado da base' : (lfScoreUrl.value ? 'URL configurada' : '');
+      lfMsg.textContent=''; window.scrollTo({top:0,behavior:'smooth'});
+    }
+    window.delLesson=(id)=>{ if(!confirm('Apagar aula #'+id+'?'))return; db.lessons=db.lessons.filter(x=>x.id!==id); DB.save(db); listLessonsAdmin(); listLessons(); }
+
+    function listUsers(){
+      userList.innerHTML=db.users.map(u=>`
+        <li class="p-3 rounded-xl border border-gray-200 dark:border-gray-800 flex items-center justify-between">
+          <div><p class="font-semibold">${u.name||'(sem nome)'} <span class="text-xs text-gray-500">${u.email}</span></p>
+          <p class="text-xs text-gray-500">role: <span class="mono">${u.role}</span></p></div>
+          <div class="flex items-center gap-2 text-xs">
+            <button class="px-2 py-1 rounded border" onclick="setRole('${u.id}','student')">Tornar aluno</button>
+            <button class="px-2 py-1 rounded border" onclick="setRole('${u.id}','admin')">Tornar admin</button>
+          </div>
+        </li>`).join('');
+    }
+    window.setRole=(id,role)=>{const i=db.users.findIndex(u=>u.id===id); if(i<0)return; db.users[i].role=role; DB.save(db); if(currentUser?.id===id){currentUser.role=role; renderAfterAuth();} listUsers();}
+
+    // ---------- Backup ----------
+    $('#btnExport').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='musiccms_db.json';a.click();URL.revokeObjectURL(url);});
+    $('#fileImport').addEventListener('change',(e)=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{db=JSON.parse(r.result);DB.save(db);renderAfterAuth();alert('Importado com sucesso!');}catch{alert('JSON inválido');}};r.readAsText(f);});
+    $('#btnReset').addEventListener('click',()=>{if(confirm('Resetar a base de demonstração?')){db=DB.seed();renderAfterAuth();}});
+
+    // ---------- Auth binds ----------
+    $('#formSignin').addEventListener('submit',async(e)=>{e.preventDefault();$('#siMsg').textContent='Entrando...';const resp=await doLogin($('#siEmail').value.trim(),$('#siPass').value.trim());$('#siMsg').textContent=resp.error||'';});
+    $('#formSignup').addEventListener('submit',async(e)=>{e.preventDefault();$('#suMsg').textContent='Criando...';const resp=await doSignup($('#suName').value.trim(),$('#suEmail').value.trim(),$('#suPass').value.trim());$('#suMsg').textContent=resp.error||'Conta criada!';});
+    $('#btnLogout').addEventListener('click',()=>logout());
+
+    // ---------- Router ----------
+    window.addEventListener('hashchange',()=>{const h=location.hash.replace('#','');if(h==='admin'&&!isAdmin())return alert('Acesso restrito. Faça login como admin.');renderAfterAuth();});
+
+    function renderAfterAuth(){
+      if(!currentUser){ show('auth'); return; }
+      userEmail.textContent=currentUser.email; userRole.textContent=currentUser.role;
+      if(location.hash.replace('#','')==='admin' && isAdmin()){ listLessonsAdmin(); listUsers(); show('admin'); }
+      else { listLessons(); show('student'); }
+    }
+
+    renderAfterAuth();
+    // Conveniência para testar
+    $('#siEmail').value='admin@demo.local'; $('#siPass').value='admin123';
+
+    // Bind admin buttons
+    $('#btnSaveLesson').addEventListener('click',(e)=>{e.preventDefault();saveLesson();});
+    $('#btnResetLesson').addEventListener('click',()=>{lfId.value='';lfTitle.value='';lfDesc.value='';lfVideo.value='';lfPub.checked=true;lfScoreUrl.value='';importedScoreXML='';scoreStatus.textContent='';lfMsg.textContent='';});
+  </script>
+</body>
+</html>
